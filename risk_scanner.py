@@ -50,13 +50,13 @@ BRUTE_FORCE_TARGET_EMAIL = os.environ.get("RISK_SCANNER_BRUTE_FORCE_EMAIL", "adm
 
 # Workbook to analyse for the payroll fraud scan. Defaults to the small
 # sample workbook that ships with this repo under sample_data/.
-PAYROLL_WORKBOOK_PATH = os.environ.get("RISK_SCANNER_PAYROLL_PATH", "sample_data/payroll_sample.xlsx")
+PAYROLL_WORKBOOK_PATH = os.environ.get("RISK_SCANNER_PAYROLL_PATH", "payroll_sample.xlsx")
 TENURE_MISMATCH_THRESHOLD_DAYS = int(os.environ.get("RISK_SCANNER_TENURE_THRESHOLD_DAYS", "30"))
 
 # ===========================================================================
 # SHARED REPORTING HELPERS
 # ===========================================================================
-SEVERITY_ORDER = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}
+SEVERITY_ORDER = { "HIGH": 1, "MEDIUM": 2, "LOW": 3}
 
 
 def print_section(title):
