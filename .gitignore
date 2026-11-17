@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+wordlists/
+*.xlsx
+!sample_data/payroll_sample.xlsx
