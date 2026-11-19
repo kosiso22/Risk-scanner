@@ -42,14 +42,8 @@ import pandas as pd
 # without pointing it at anything live or production.
 WEB_TARGET = os.environ.get("RISK_SCANNER_WEB_TARGET", "http://localhost:3000")
 
-# Wordlist for the optional brute-force check. Not included in this repo --
-# supply your own path for local testing (e.g. a copy of rockyou.txt).
-ROCKYOU_PATH = os.environ.get("RISK_SCANNER_WORDLIST_PATH", "wordlists/rockyou.txt")
-BRUTE_FORCE_LIMIT = int(os.environ.get("RISK_SCANNER_BRUTE_FORCE_LIMIT", "200"))
-BRUTE_FORCE_TARGET_EMAIL = os.environ.get("RISK_SCANNER_BRUTE_FORCE_EMAIL", "admin@juice-sh.op")
 
-# Workbook to analyse for the payroll fraud scan. Defaults to the small
-# sample workbook that ships with this repo under sample_data/.
+# Workbook to analyse for the payroll fraud scan.
 PAYROLL_WORKBOOK_PATH = os.environ.get("RISK_SCANNER_PAYROLL_PATH", "payroll_sample.xlsx")
 TENURE_MISMATCH_THRESHOLD_DAYS = int(os.environ.get("RISK_SCANNER_TENURE_THRESHOLD_DAYS", "30"))
 
