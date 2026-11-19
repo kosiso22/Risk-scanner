@@ -13,7 +13,7 @@ A single Python script that runs two small, education-focused risk checks:
    the recorded hire date, and mismatches between recorded tenure and
    actual payment history.
 
-I built this as a self-contained way to practice both sides of risk work. I'm interested in  application security testing and the kind of fraud/control checks you'd do on financial data — in one small tool, rather than two unrelated scripts.
+I built this as a self-contained way to practice both sides of risk work. I'm interested in  application security testing and the kind of fraud/control checks you'd do on financial data in one small tool, rather than two unrelated scripts.
 
 ## About the web target
 
@@ -63,9 +63,6 @@ shell):
 | Variable | Default | Purpose |
 |---|---|---|
 | `RISK_SCANNER_WEB_TARGET` | `http://localhost:3000` | Target for the web scan |
-| `RISK_SCANNER_WORDLIST_PATH` | `wordlists/rockyou.txt` | Wordlist for the optional brute-force check |
-| `RISK_SCANNER_BRUTE_FORCE_LIMIT` | `200` | Max passwords to try |
-| `RISK_SCANNER_BRUTE_FORCE_EMAIL` | `admin@juice-sh.op` | Account targeted by the brute-force check |
 | `RISK_SCANNER_PAYROLL_PATH` | `payroll_sample.xlsx` | Workbook for the payroll scan |
 | `RISK_SCANNER_TENURE_THRESHOLD_DAYS` | `30` | Gap (in days) that counts as a tenure/payment mismatch |
 
