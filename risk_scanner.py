@@ -1,5 +1,5 @@
 """
-Risk Scanner -- Web Vulnerability + Payroll Fraud
+Risk Scanner 
 ==================================================
 
 Two small, education-focused scanners live in this one file:
