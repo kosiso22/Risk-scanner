@@ -7,7 +7,7 @@ Two small, education-focused scanners live in this one file:
 1. A web application scanner that checks a target for a handful of
    classic OWASP Top 10 issues: reflected XSS, SQL injection, missing
    security headers, IDOR / broken access control, privilege escalation,
-   weak passwords (optional brute-force check), and a basic indicator of
+   weak passwords, and a basic indicator of
    unrestricted file upload / RCE risk.
 
 2. A payroll fraud scanner that reads a single Excel workbook containing
@@ -107,7 +107,7 @@ WEB_VULN_INFO = {
     },
     "sql_injection": {
         "name": "SQL Injection",
-        "severity": "CRITICAL",
+        "severity": "HIGH",
         "message": "A SQLi payload caused an abnormal response (auth bypass or DB error leakage).",
         "iso_control": "A.14 System Acquisition, Development & Maintenance",
         "business_impact": "An attacker can bypass authentication entirely, "
@@ -158,7 +158,7 @@ WEB_VULN_INFO = {
     },
     "privilege_escalation": {
         "name": "Privilege Escalation",
-        "severity": "CRITICAL",
+        "severity": "HIGH",
         "message": "A low-privilege account was able to access an admin-only endpoint.",
         "iso_control": "A.9 Access Control",
         "business_impact": "A regular user, or an attacker who registers a "
@@ -173,7 +173,7 @@ WEB_VULN_INFO = {
         ],
     },
     "weak_password_policy": {
-        "name": "Weak Password / Successful Brute Force",
+        "name": "Weak Password",
         "severity": "HIGH",
         "message": "A password from the supplied wordlist successfully "
                     "authenticated as a known account.",
@@ -185,13 +185,10 @@ WEB_VULN_INFO = {
                        "or lockout on failed login attempts.",
         "remediation": "Enforce a strong password policy, add rate-limiting "
                         "and lockout, and offer multi-factor authentication.",
-        "references": [
-            "https://owasp.org/www-community/attacks/Brute_force_attack",
-        ],
     },
     "rce_indicator": {
         "name": "Remote Code Execution (RCE) Indicator",
-        "severity": "CRITICAL",
+        "severity": "HIGH",
         "message": "An upload endpoint showed signs it may accept and store "
                     "attacker-controlled content.",
         "iso_control": "A.14 System Acquisition, Development & Maintenance",
@@ -259,7 +256,7 @@ def check_sql_injection(session, base_url, account):
     body_lower = resp.text.lower()
     if resp.status_code == 200 and "token" in body_lower:
         return build_web_finding("sql_injection", evidence=f"{url} (auth bypass)")
-    if resp.status_code >= 400 and any(s in body_lower for s in ["sql", "sqlite", "syntax error"]):
+    if resp.status_code >= 500 and any(s in body_lower for s in ["sql", "sqlite", "syntax error"]):
         return build_web_finding("sql_injection", evidence=f"{url} (error leakage)")
     return None
 
@@ -306,35 +303,6 @@ def check_privilege_escalation(session, base_url, account):
     return None
 
 
-def check_brute_force(session, base_url, account):
-    try:
-        with open(ROCKYOU_PATH, "r", encoding="latin-1") as f:
-            for i, line in enumerate(f):
-                if i >= BRUTE_FORCE_LIMIT:
-                    break
-                password = line.strip()
-                if not password:
-                    continue
-                try:
-                    resp = session.post(
-                        f"{base_url}/rest/user/login",
-                        json={"email": BRUTE_FORCE_TARGET_EMAIL, "password": password},
-                        timeout=5,
-                    )
-                except requests.RequestException:
-                    continue
-                if resp.status_code == 200 and "token" in resp.text.lower():
-                    return build_web_finding(
-                        "weak_password_policy",
-                        evidence=f"Password cracked after {i + 1} attempts (wordlist: {ROCKYOU_PATH})",
-                    )
-                time.sleep(0.05)
-    except FileNotFoundError:
-        print(f"[-] Wordlist not found at {ROCKYOU_PATH} — skipping brute force check.")
-        return None
-    return None
-
-
 def check_rce_indicator(session, base_url, account):
     if not account or not account.get("token"):
         return None
@@ -352,7 +320,7 @@ def check_rce_indicator(session, base_url, account):
     return None
 
 
-def run_web_scan(base_url=WEB_TARGET, include_brute_force=False):
+def run_web_scan(base_url=WEB_TARGET):
     session = requests.Session()
     account = register_test_account(session, base_url)
 
@@ -364,9 +332,7 @@ def run_web_scan(base_url=WEB_TARGET, include_brute_force=False):
         check_privilege_escalation,
         check_rce_indicator,
     ]
-    if include_brute_force:
-        checks.append(check_brute_force)
-
+   
     findings = []
     for check in checks:
         result = check(session, base_url, account)
@@ -397,7 +363,7 @@ PAYROLL_FRAUD_INFO = {
     },
     "duplicate_bank_account": {
         "name": "Duplicate Bank Account Across Employees",
-        "severity": "CRITICAL",
+        "severity": "HIGH",
         "business_impact": "Multiple 'different' employees paid into the "
                             "same bank account is one of the strongest "
                             "indicators of a ghost employee scheme.",
@@ -408,7 +374,7 @@ PAYROLL_FRAUD_INFO = {
     },
     "payment_before_hire": {
         "name": "Payment Recorded Before Official Hire Date",
-        "severity": "CRITICAL",
+        "severity": "HIGH",
         "business_impact": "An employee ID receiving payment before its "
                             "official hire date suggests the ID was used, or "
                             "payments routed, before the role or person was "
@@ -597,7 +563,7 @@ def main():
 
     if choice in ("1", "3"):
         print_section(f"WEB APPLICATION SECURITY ASSESSMENT — target: {WEB_TARGET}")
-        web_findings = run_web_scan(WEB_TARGET, include_brute_force=False)
+        web_findings = run_web_scan(WEB_TARGET)
         print_findings(web_findings, "No vulnerabilities found by the current checks.")
 
     if choice in ("2", "3"):
