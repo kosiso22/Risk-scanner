@@ -2,34 +2,27 @@
 
 A single Python script that runs two small, education-focused risk checks:
 
-1. **Web application scan** — checks a target for a handful of classic
+1. **Web application scan**: checks a target for a handful of classic
    OWASP Top 10 issues: reflected XSS, SQL injection, missing security
    headers, IDOR / broken access control, privilege escalation, weak
    passwords (optional brute-force check), and a basic indicator of
    unrestricted file upload / RCE risk.
-2. **Payroll fraud scan** — reads one Excel workbook containing an
+2. **Payroll fraud scan**: reads one Excel workbook containing an
    employee sheet and a payments sheet, and flags duplicate employee
    records, bank accounts shared across employees, payments made before
    the recorded hire date, and mismatches between recorded tenure and
    actual payment history.
 
-I built this as a self-contained way to practice both sides of risk work. I'm interested in  application security testing and the kind of fraud/control checks you'd do on financial data in one small tool, rather than two unrelated scripts.
+I built this as a self-contained way to practice both sides of risk work. I'm interested in  application security testing and the kind of fraud/control checks you would do on financial data in one small tool, rather than two unrelated scripts. The tool is a work-in-progress and is subject to updates.
 
 ## About the web target
 
-The web scan is written and tested against **[OWASP Juice Shop](https://owasp.org/www-project-juice-shop/)**,
-a deliberately vulnerable application that OWASP maintains specifically
-so people can practice web security testing legally and safely.
+The web scan was written and tested against OWASP Juice Shop, so the tests were conducted in a safe environment specifically designed to practice web security testing legally.
 
-It's used here as a **stand-in for a real-world financial/payroll web
-application**. The checks (auth bypass, IDOR on another user's data,
-privilege escalation to an admin endpoint, etc.) are the kind of
-things you wouldd want to test on a real payroll portal before it goes live,
-just run here against a safe practice target instead.
+It's used here as a **stand-in for a real-world financial/payroll web application**. The checks (auth bypass, IDOR on another user's data,
+privilege escalation to an admin endpoint, etc.) are the kind of things you wouldd want to test on a real payroll portal before it goes live, just run here against a safe practice target instead.
 
-**Never point the web scan at a site you don't own or don't have explicit
-written permission to test.** Running these checks against systems you
-are not authorized to test is illegal.
+**Never point the web scan at a site you don't own or don't have explicit written permission to test.** Running these checks against systems you are not authorized to test is illegal.
 
 ## What's in this repo
 
@@ -49,22 +42,7 @@ cd risk-scanner
 pip install -r requirements.txt
 ```
 
-This runs Juice Shop locally at `http://localhost:3000`, which is the
-scanner's default target — no configuration needed.
-
-### 2. Configure (optional)
-
-Everything is read from environment variables, so nothing personal or
-machine-specific lives in the code. Defaults are sensible for the setup
-above and for the sample payroll file. To override any of them, set
-these before running (e.g. in a `.env` file you load yourself, or your
-shell):
-
-| Variable | Default | Purpose |
-|---|---|---|
-| `RISK_SCANNER_WEB_TARGET` | `http://localhost:3000` | Target for the web scan |
-| `RISK_SCANNER_PAYROLL_PATH` | `payroll_sample.xlsx` | Workbook for the payroll scan |
-| `RISK_SCANNER_TENURE_THRESHOLD_DAYS` | `30` | Gap (in days) that counts as a tenure/payment mismatch |
+This runs Juice Shop locally at `http://localhost:3000`, which is the scanner's default target — no configuration needed.
 
 ## Running it
 
@@ -96,11 +74,7 @@ work out which sheet is which:
 
 ## A note on data protection
 
-Don't commit real payroll data, real credentials, or a real wordlist to
-a public repository. The sample workbook in `sample_data` is fully
-fictional and safe to share; `wordlists/` is git-ignored for exactly
-this reason — bring your own copy locally if you want to try the
-brute-force check.
+Don't commit real payroll data, real credentials, or a real wordlist to a public repository.
 
 ## Why this exists
 
